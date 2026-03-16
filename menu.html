@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú · Colombia Pizza</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --amarillo: #f5c542;
+      --rojo: #e11d2f;
+      --blanco: #ffffff;
+      --gris: #f4f5f7;
+      --sombra: 0 10px 25px -5px rgba(0,0,0,0.1);
+    }
+    body {
+      background: #f8f9fa;
+      color: #1e1e1e;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: var(--blanco);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.07);
+      padding: 0.9rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: nowrap;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+    .brand img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--amarillo); }
+    .brand span {
+      font-family: 'Bebas Neue', system-ui, sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.12em;
+    }
+    .actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .cart-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+    .cart-btn svg { width: 20px; height: 20px; display: block; color: #2c3e50; }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--rojo);
+      color: white;
+      font-weight: 900;
+      font-size: 0.75rem;
+      min-width: 20px;
+      padding: 0.15rem 0.4rem;
+      border-radius: 999px;
+      text-align: center;
+      border: 2px solid var(--blanco);
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.2rem;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-primary { background: var(--rojo); color: white; box-shadow: 0 10px 22px rgba(225, 29, 47, 0.25); }
+    .btn-primary:hover { background: #b01020; transform: translateY(-1px); }
+    .btn-outline { background: transparent; border-color: var(--rojo); color: var(--rojo); }
+    .btn-outline:hover { background: var(--rojo); color: white; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 2.25rem 5% 4rem; }
+    h1 {
+      font-size: 2.4rem;
+      letter-spacing: 0.06em;
+      font-family: 'Bebas Neue', system-ui, sans-serif;
+    }
+    .lead { margin-top: 0.5rem; color: #4a4a4a; }
+
+    .tabs {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .chip {
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      background: var(--blanco);
+      border: 1px solid rgba(0,0,0,0.08);
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+    .chip.active { background: var(--amarillo); border-color: rgba(0,0,0,0.12); }
+
+    .section { margin-top: 2.25rem; }
+    .section h2 {
+      font-size: 1.9rem;
+      margin-bottom: 1rem;
+      border-left: 6px solid var(--rojo);
+      padding-left: 0.9rem;
+      font-family: 'Bebas Neue', system-ui, sans-serif;
+      letter-spacing: 0.08em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+    .card {
+      background: var(--blanco);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--sombra);
+      border: 1px solid rgba(245,197,66,0.25);
+      display: flex;
+      flex-direction: column;
+    }
+    .card img { width: 100%; height: 170px; object-fit: cover; border-bottom: 4px solid var(--amarillo); }
+    .card-body { padding: 1.1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
+    .title { font-size: 1.2rem; font-weight: 900; }
+    .desc { color: #4a4a4a; font-size: 0.95rem; }
+    .row { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; margin-top: auto; }
+    .price { font-size: 1.15rem; font-weight: 950; color: var(--rojo); }
+    .tag { font-size: 0.85rem; font-weight: 800; padding: 0.25rem 0.55rem; border-radius: 999px; background: rgba(245,197,66,0.35); }
+
+    .promo {
+      background: linear-gradient(135deg, rgba(245,197,66,0.55), rgba(225,29,47,0.12));
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .promo .tag { background: rgba(225,29,47,0.12); }
+    .add-row { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 0.2rem; }
+    .btn-add {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background: var(--amarillo);
+      color: #1e1e1e;
+      font-weight: 900;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-add:hover { transform: translateY(-1px); filter: brightness(0.98); }
+
+    .footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08); color: #4a4a4a; }
+
+    /* Hero estilo banner de pizza.html */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 260px;
+      margin-top: 86px; /* alto aproximado de la topbar fija */
+      background-image: url('banner-pizza.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.78), rgba(0,0,0,0.4));
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      width: 100%;
+      padding: 2.5rem 5%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      color: #ffffff;
+    }
+    .hero-kicker {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(245,197,66,0.92);
+      color: #1e1e1e;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', system-ui, sans-serif;
+      font-size: clamp(2.4rem, 4vw, 3.3rem);
+      letter-spacing: 0.14em;
+      line-height: 1.02;
+      text-transform: uppercase;
+    }
+    .hero-title span {
+      color: var(--amarillo);
+    }
+    .hero-sub {
+      max-width: 520px;
+      font-size: 0.98rem;
+      color: #e5e7eb;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 0.6rem;
+    }
+    .hero-actions .btn-primary {
+      padding-inline: 1.5rem;
+    }
+    .hero-actions .btn-outline {
+      border-color: var(--blanco);
+      color: var(--blanco);
+      background: transparent;
+    }
+    .hero-actions .btn-outline:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--blanco);
+    }
+
+    /* Ajustes responsive: evita que se “pierda” la barra */
+    .mobile-only { display: none; }
+    @media (max-width: 640px) {
+      .topbar { padding: 0.75rem 5%; gap: 0.6rem; }
+      .brand span { font-size: 1.35rem; letter-spacing: 0.10em; }
+      .actions { gap: 0.5rem; flex-wrap: nowrap; }
+      .mobile-hide { display: none !important; }
+      .mobile-only { display: inline-flex; }
+      .hero { margin-top: 78px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <img src="logo-defe.jpg" alt="Colombia Pizza">
+      <span>COLOMBIA PIZZA</span>
+    </a>
+    <div class="actions">
+      <button id="menuCartBtn" class="relative group p-2 text-gray-800 hover:text-[var(--rojo)] transition flex items-center gap-2" aria-label="Abrir carrito en la página principal">
+          <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          <span class="hidden lg:block font-semibold">Mi Orden</span>
+          <span id="cartCount" class="absolute top-0 right-0 sm:-right-2 bg-[var(--rojo)] text-white text-[10px] sm:text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-transform">0</span>
+      </button>
+      <a class="btn btn-outline mobile-hide" href="index.html">Volver</a>
+      <a class="btn btn-primary mobile-hide" href="index.html#contacto">Contáctenos</a>
+      <a class="btn btn-outline mobile-only" href="index.html">Volver</a>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">Explora todo el <span>menú</span></h1>
+      <p class="hero-sub">Pizzas, promos y acompañantes listos para agregar a tu carrito y completar el pedido desde la página principal.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="index.html#menu">Ver lo más pedido</a>
+        <a class="btn btn-outline" href="index.html#contacto">Hablar con un asesor</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Menú de ejemplo</h1>
+    <p class="lead">Pizzas, lasagnas, alitas y promos para inspirar tu carta. Puedes editar nombres, precios e imágenes.</p>
+
+    <div class="tabs" id="tabs">
+      <div class="chip active" data-filter="all">Todo</div>
+      <div class="chip" data-filter="pizzas">Pizzas</div>
+      <div class="chip" data-filter="alitas">Alitas</div>
+      <div class="chip" data-filter="lasagnas">Lasagnas</div>
+      <div class="chip" data-filter="promos">Promos</div>
+    </div>
+
+    <section class="section" id="pizzas">
+      <h2>Pizzas</h2>
+      <div class="grid">
+        <article class="card" data-cat="pizzas" data-id="101" data-name="Pepperoni Clásica" data-price="10.99" data-image="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200" alt="Pizza pepperoni">
+          <div class="card-body">
+            <div class="title">Pepperoni Clásica</div>
+            <div class="desc">Salsa de la casa, mozzarella, pepperoni y orégano.</div>
+            <div class="row">
+              <div class="price">$ 10,99</div>
+              <div class="tag">Más vendida</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card" data-cat="pizzas" data-id="102" data-name="Hawaiana" data-price="11.49" data-image="https://images.unsplash.com/photo-1593560708920-61dd98c46a46?w=1200">
+          <img src="https://i.blogs.es/ad0e95/como-preparar-pizza-con-pina-1-/650_1200.jpg" alt="Pizza hawaiana">
+          <div class="card-body">
+            <div class="title">Hawaiana</div>
+            <div class="desc">Jamón, piña, mozzarella y toque de miel picante.</div>
+            <div class="row">
+              <div class="price">$ 11,49</div>
+              <div class="tag">Dulce-salada</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card" data-cat="pizzas" data-id="103" data-name="Cuatro Quesos" data-price="12.49" data-image="https://images.unsplash.com/photo-1544982503-7a255f56f85e?w=1200">
+          <img src="https://www.hola.com/horizon/landscape/e8bb41b65869-pizzacuatroquesos-adob-t.jpg" alt="Pizza cuatro quesos">
+          <div class="card-body">
+            <div class="title">Cuatro Quesos</div>
+            <div class="desc">Mozzarella, parmesano, provolone y azul.</div>
+            <div class="row">
+              <div class="price">$ 12,49</div>
+              <div class="tag">Intensa</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card" data-cat="pizzas" data-id="104" data-name="Vegetariana" data-price="11.99" data-image="https://images.unsplash.com/photo-1601924638867-3ec9d3a0b6b3?w=1200">
+          <img src="https://easyways.cl/storage/20211103083114pizza-vegetariana.jpg" alt="Pizza vegetariana">
+          <div class="card-body">
+            <div class="title">Vegetariana</div>
+            <div class="desc">Pimentón, champiñón, cebolla morada, aceitunas.</div>
+            <div class="row">
+              <div class="price">$ 11,99</div>
+              <div class="tag">Ligera</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="alitas">
+      <h2>Alitas</h2>
+      <div class="grid">
+        <article class="card" data-cat="alitas" data-id="201" data-name="Alitas BBQ" data-price="8.99" data-image="https://images.unsplash.com/photo-1604909053191-6f6f1b019a0f?w=1200">
+          <img src="https://d1uz88p17r663j.cloudfront.net/original/93b56cd92fabe8db2070b53dea9bb1a5_alitas_bbq_con_aji%E2%95%A0%C3%BC_chombo1.jpg" alt="Alitas BBQ">
+          <div class="card-body">
+            <div class="title">Alitas BBQ</div>
+            <div class="desc">8 piezas bañadas en BBQ ahumada.</div>
+            <div class="row">
+              <div class="price">$ 8,99</div>
+              <div class="tag">Ahumadas</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card" data-cat="alitas" data-id="202" data-name="Alitas Picantes" data-price="9.49" data-image="https://polloseldorado.co/wp-content/uploads/2023/04/Imagene-2-1024x536.jpg">
+          <img src="https://cdn7.kiwilimon.com/recetaimagen/33623/960x640/39037.jpg.jpg" alt="Alitas picantes">
+          <div class="card-body">
+            <div class="title">Alitas Picantes</div>
+            <div class="desc">8 piezas con salsa buffalo y aderezo.</div>
+            <div class="row">
+              <div class="price">$ 9,49</div>
+              <div class="tag">Buffalo</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="lasagnas">
+      <h2>Lasagnas</h2>
+      <div class="grid">
+        <article class="card" data-cat="lasagnas" data-id="301" data-name="Lasagna de Pollo" data-price="9.99" data-image="https://images.unsplash.com/photo-1604908177074-4f841f35a62a?w=1200">
+          <img src="https://www.recetasnestle.com.do/sites/default/files/srh_recipes/73b4e3ad185b6783b880bee34fbda33d.jpg" alt="Lasagna de pollo">
+          <div class="card-body">
+            <div class="title">Lasagna de Pollo</div>
+            <div class="desc">Salsa blanca, pollo, gratinado y especias.</div>
+            <div class="row">
+              <div class="price">$ 9,99</div>
+              <div class="tag">Cremosa</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card" data-cat="lasagnas" data-id="302" data-name="Lasagna de Carne" data-price="10.49" data-image="https://images.unsplash.com/photo-1608751819117-5a6b8f7b47b5?w=1200">
+          <img src="https://www.recetasdesbieta.com/wp-content/uploads/2018/10/lasagna-original..jpg" alt="Lasagna de carne">
+          <div class="card-body">
+            <div class="title">Lasagna de Carne</div>
+            <div class="desc">Boloñesa, mozzarella, parmesano, gratinado.</div>
+            <div class="row">
+              <div class="price">$ 10,49</div>
+              <div class="tag">Boloñesa</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="promos">
+      <h2>Promos</h2>
+      <div class="grid">
+        <article class="card promo" data-cat="promos" data-id="401" data-name="Promo 2x1" data-price="19.99" data-image="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200">
+          <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200" alt="Promo 2x1">
+          <div class="card-body">
+            <div class="title">Promo 2x1</div>
+            <div class="desc">2 pizzas medianas (sabores seleccionados).</div>
+            <div class="row">
+              <div class="price">$ 19,99</div>
+              <div class="tag">Ahorro</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+        <article class="card promo" data-cat="promos" data-id="402" data-name="Combo Familiar" data-price="24.99" data-image="https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=1200">
+          <img src="https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=1200" alt="Combo familiar">
+          <div class="card-body">
+            <div class="title">Combo Familiar</div>
+            <div class="desc">Pizza grande + alitas + bebida.</div>
+            <div class="row">
+              <div class="price">$ 24,99</div>
+              <div class="tag">Combo</div>
+            </div>
+            <button class="btn-add w-full bg-gray-50 hover:bg-[var(--rojo)] text-gray-900 hover:text-white font-bold py-3.5 px-4 rounded-xl border border-gray-200 hover:border-[var(--rojo)] transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm" type="button">
+              <svg class="w-5 h-5 transition-transform group-hover/btn:scale-125 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span class="pointer-events-none">Agregar a tu Orden</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>Agrega productos al carrito aquí y vuelve a la página principal para verlos en tu carrito.</div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const CART_STORAGE_KEY = 'cp_cart_v1';
+      const chips = Array.from(document.querySelectorAll('.chip'));
+      const cards = Array.from(document.querySelectorAll('.card'));
+
+      function readStoredCart() {
+        try {
+          const raw = localStorage.getItem(CART_STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function writeStoredCart(nextCart) {
+        try {
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(nextCart));
+        } catch {
+          // ignore
+        }
+      }
+
+      function updateBadge() {
+        const cart = readStoredCart();
+        const count = cart.reduce((acc, i) => acc + (Number(i.quantity) || 0), 0);
+        const badge = document.getElementById('cartCount');
+        if (badge) badge.textContent = String(count);
+      }
+
+      function addCardToCart(cardEl) {
+        const id = Number(cardEl.getAttribute('data-id'));
+        const name = cardEl.getAttribute('data-name') || 'Producto';
+        const price = Number(cardEl.getAttribute('data-price'));
+        const image = cardEl.getAttribute('data-image') || '';
+
+        const cart = readStoredCart();
+        const existing = cart.find(i => Number(i.id) === id);
+        if (existing) {
+          existing.quantity = (Number(existing.quantity) || 0) + 1;
+        } else {
+          cart.push({ id, name, price, image, quantity: 1 });
+        }
+        writeStoredCart(cart);
+        updateBadge();
+      }
+
+      function setActive(target) {
+        chips.forEach(c => c.classList.toggle('active', c === target));
+      }
+      function applyFilter(filter) {
+        cards.forEach(card => {
+          const cat = card.getAttribute('data-cat');
+          const show = filter === 'all' || cat === filter;
+          card.style.display = show ? '' : 'none';
+        });
+      }
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const filter = chip.getAttribute('data-filter');
+          setActive(chip);
+          applyFilter(filter);
+        });
+      });
+
+      document.querySelectorAll('.btn-add').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.card');
+          if (card) addCardToCart(card);
+        });
+      });
+
+      // Abrir carrito automáticamente en la página principal cuando venga desde el menú
+      const menuCartBtn = document.getElementById('menuCartBtn');
+      if (menuCartBtn) {
+        menuCartBtn.addEventListener('click', () => {
+          try {
+            localStorage.setItem('cp_open_cart_on_load', '1');
+          } catch {}
+          window.location.href = 'index.html#cartPanel';
+        });
+      }
+
+      updateBadge();
+      applyFilter('all');
+    })();
+  </script>
+</body>
+</html>
+
